@@ -7,8 +7,8 @@ namespace Ontrackd\Feedback;
  *
  * - **local**: `APP_ENV=local`. Blade elements carry their file and line; the widget and its API
  *   come from the sidecar the project's Vite dev server starts (`npm run dev`, with
- *   `feedback()` in vite.config.js), reached through this app at `/__feedback` and `/__fb`.
- * - **shared**: a secret is set and `php artisan feedback:manifest` has run for these views. Elements
+ *   `ontrackd()` in vite.config.js), reached through this app at `/__feedback` and `/__fb`.
+ * - **shared**: a secret is set and `php artisan ontrackd:manifest` has run for these views. Elements
  *   carry opaque ids, explained by the manifest it uploaded; the widget comes from the API.
  * - **tag**: a secret is set but no manifest has been made. Nothing is stamped; the widget comes from
  *   the API and describes elements instead, so comments still work, with less precision.
@@ -45,14 +45,14 @@ final class Feedback
         return preg_match('/^(?:p_[a-z0-9]{6,32}|prj_[0-7][0-9a-hjkmnp-tv-z]{25})$/', $project) ? $project : null;
     }
 
-    /** The build `feedback:manifest` recorded for the current views, when it has run. */
+    /** The build `ontrackd:manifest` recorded for the current views, when it has run. */
     public static function buildId(): ?string
     {
         $data = self::buildMetadata();
         return isset($data['buildId']) && is_string($data['buildId']) ? $data['buildId'] : null;
     }
 
-    /** Build and public runtime metadata recorded by `feedback:manifest`. */
+    /** Build and public runtime metadata recorded by `ontrackd:manifest`. */
     private static function buildMetadata(): array
     {
         $file = storage_path(self::BUILD_FILE);

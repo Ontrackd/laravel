@@ -17,8 +17,8 @@ final class SidecarProxy
         $port = Sidecar::port();
         if ($port === null) {
             return response(
-                "The feedback sidecar is not running for this project.\n"
-                . "Start your Vite dev server (npm run dev) with feedback() in vite.config.js: it starts the sidecar.\n",
+                "The ontrackd sidecar is not running for this project.\n"
+                . "Start your Vite dev server (npm run dev) with ontrackd() in vite.config.js: it starts the sidecar.\n",
                 502,
                 ['content-type' => 'text/plain; charset=utf-8'],
             );

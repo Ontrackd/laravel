@@ -57,37 +57,37 @@ You need Laravel 11, 12 or 13, PHP 8.2 or later, and Vite.
 
 ```bash
 composer require ontrackd/laravel
-npm i -D @ontrackd/feedback
+npm i -D ontrackd
 ```
 
 Then add the Vite plugin, before `laravel()`:
 
 ```js
 // vite.config.js
-import { feedback } from '@ontrackd/feedback/vite';
+import { ontrackd } from 'ontrackd/vite';
 
 export default defineConfig({
     plugins: [
-        feedback({ shared: Boolean(process.env.FEEDBACK_SECRET) }),
+        ontrackd({ shared: Boolean(process.env.ONTRACKD_SECRET) }),
         laravel({ /* … */ }),
     ],
 });
 ```
 
-Or let `npx @ontrackd/feedback init` do all three for you.
+Or let `npx ontrackd init` do all three for you.
 
 Run `npm run dev` and `php artisan serve`, open your app, and press <kbd>Alt</kbd> <kbd>Shift</kbd>
 <kbd>F</kbd> (<kbd>⌥</kbd> <kbd>⇧</kbd> <kbd>F</kbd> on a Mac) if the bar isn't showing. Click
 anything and leave a comment. That's it: the service provider registers itself, and the widget is
 added to every HTML page just before `</head>`. If you'd rather place it yourself, set
-`FEEDBACK_INJECT=false` and put `@feedback` in your layout's `<head>`.
+`ONTRACKD_INJECT=false` and put `@ontrackd` in your layout's `<head>`.
 
 Without an account, comments stay on your machine. To share previews and work with your team,
 [create a free account](https://app.ontrackd.com), make a project, and copy its secret from the
 **Setup** tab into `.env`:
 
 ```ini
-FEEDBACK_SECRET=sk_prj_…
+ONTRACKD_SECRET=sk_prj_…
 ```
 
 Your dev server then asks you to sign in once, and your comments go to the project. Nothing to
@@ -95,12 +95,12 @@ register: `127.0.0.1:8000`, `localhost` and Herd or Valet's `*.test` domains wor
 
 ## Previews
 
-Set `FEEDBACK_SECRET` wherever your previews are deployed, and add one line to the deploy, after the
+Set `ONTRACKD_SECRET` wherever your previews are deployed, and add one line to the deploy, after the
 assets are built:
 
 ```bash
 npm run build
-php artisan feedback:manifest
+php artisan ontrackd:manifest
 ```
 
 That reads your views, uploads a small map from elements back to Blade lines, and recompiles the
@@ -108,6 +108,8 @@ views with it. Comments on the preview then come with their file and line, like 
 Skip it and comments still work; they just describe the element instead of pointing at the line.
 
 The map is written to `.feedback/` before it goes up, so add that folder to your `.gitignore`.
+
+If you set this up before the rename, `FEEDBACK_SECRET`, `FEEDBACK_INJECT`, `@feedback` and `php artisan feedback:manifest` still work.
 
 [Sharing a preview](https://ontrackd.com/docs/share-a-preview/) covers allowed sites and review links.
 
@@ -128,7 +130,7 @@ The map is written to `.feedback/` before it goes up, so add that folder to your
 | Where | What gets stamped | Where comments go |
 | --- | --- | --- |
 | `APP_ENV=local` and `npm run dev` | `data-fb-src` with the Blade file, line and column | Your machine |
-| The same, with `FEEDBACK_SECRET` in `.env` | The same | Your project, with your git branch |
+| The same, with `ONTRACKD_SECRET` in `.env` | The same | Your project, with your git branch |
 | A preview, with the secret and a manifest | An opaque `data-fb-id`, explained by the manifest | Your project, pinned to that build |
 | A preview, with the secret and no manifest | Nothing | Your project, elements described |
 | Production, no secret | Nothing | Nowhere. Nothing is added |

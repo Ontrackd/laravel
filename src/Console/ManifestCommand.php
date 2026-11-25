@@ -10,12 +10,12 @@ use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
- * `php artisan feedback:manifest`: run where a preview is deployed, after the code is in place.
+ * `php artisan ontrackd:manifest`: run where a preview is deployed, after the code is in place.
  *
  * Blade compiles at runtime, so there is no build to hook as the JavaScript adapters do. This is
  * the build step instead: it reads every view, records what each opaque id stands for, writes the
  * manifest the way the package writes one (`.feedback/manifests`, marked pending), and hands it to
- * `feedback push` to upload. It then records the build for the views to be stamped with, and
+ * `ontrackd push` to upload. It then records the build for the views to be stamped with, and
  * clears the compiled views so they are compiled again with ids.
  *
  * A page also has what Vite built (React, Vue, Svelte under Inertia, say), stamped by the package
@@ -25,7 +25,10 @@ use Symfony\Component\Process\Process;
  */
 final class ManifestCommand extends Command
 {
-    protected $signature = 'feedback:manifest {--no-push : Write the manifest without uploading it}';
+    protected $signature = 'ontrackd:manifest {--no-push : Write the manifest without uploading it}';
+
+    /** The name this command had before the rename; it still works. */
+    protected $aliases = ['feedback:manifest'];
 
     protected $description = 'Record what the Blade anchors stand for, for a shared preview, and upload it';
 
@@ -34,7 +37,7 @@ final class ManifestCommand extends Command
         $secret = Feedback::secret();
         $project = Feedback::projectId();
         if ($secret === null || $project === null) {
-            $this->error('FEEDBACK_SECRET is not set, or is not a project secret. Copy it from the project\'s Setup tab.');
+            $this->error('ONTRACKD_SECRET is not set, or is not a project secret. Copy it from the project\'s Setup tab.');
             return self::FAILURE;
         }
 
@@ -98,7 +101,7 @@ final class ManifestCommand extends Command
         $directory = base_path('.feedback/manifests');
         if (!is_dir($directory)) mkdir($directory, 0775, true);
         file_put_contents("$directory/$buildId.json", json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
-        file_put_contents("$directory/$buildId.json.pending", gmdate('c') . " written by feedback:manifest\n");
+        file_put_contents("$directory/$buildId.json.pending", gmdate('c') . " written by ontrackd:manifest\n");
 
         $buildFile = storage_path(Feedback::BUILD_FILE);
         if (!is_dir(dirname($buildFile))) mkdir(dirname($buildFile), 0775, true);
@@ -110,26 +113,32 @@ final class ManifestCommand extends Command
         file_put_contents($buildFile, json_encode($build) . "\n");
         Artisan::call('view:clear');
 
-        $this->info(sprintf('feedback: %d anchors in %d views, build %s.', count($list), count($files), $buildId));
+        $this->info(sprintf('ontrackd: %d anchors in %d views, build %s.', count($list), count($files), $buildId));
         if ($bundle !== null) {
             $this->line(sprintf('  With %d anchors from the Vite build %s.', count($bundle['entries']), $bundle['buildId']));
         }
 
         if ($this->option('no-push')) {
-            $this->line('  Not uploaded. Run `npx feedback push` to send it.');
+            $this->line('  Not uploaded. Run `npx ontrackd push` to send it.');
             return self::SUCCESS;
         }
         $npx = (new ExecutableFinder())->find('npx');
         if ($npx === null) {
-            $this->warn('  npx is not available here, so the manifest was not uploaded. Run `npx feedback push` where Node is, from this project.');
+            $this->warn('  npx is not available here, so the manifest was not uploaded. Run `npx ontrackd push` where Node is, from this project.');
             return self::SUCCESS;
         }
-        $push = new Process([$npx, '--no-install', 'feedback', 'push'], base_path(), ['FEEDBACK_SECRET' => $secret, 'FEEDBACK_API_URL' => Feedback::apiUrl()]);
+        // Packages from before the rename only have the `feedback` bin.
+        $bin = is_file(base_path('node_modules/.bin/ontrackd')) ? 'ontrackd' : 'feedback';
+        $push = new Process([$npx, '--no-install', $bin, 'push'], base_path(), [
+            'ONTRACKD_SECRET' => $secret, 'ONTRACKD_API_URL' => Feedback::apiUrl(),
+            // An older installed package only reads the former names.
+            'FEEDBACK_SECRET' => $secret, 'FEEDBACK_API_URL' => Feedback::apiUrl(),
+        ]);
         $push->setTimeout(60);
         $push->run(fn ($type, $text) => $this->output->write($text));
         if (!$push->isSuccessful()) {
             // Comments still work: they resolve once the manifest arrives. The preview is not broken.
-            $this->warn('  The manifest was not uploaded. Comments still work, and resolve once `npx feedback push` succeeds.');
+            $this->warn('  The manifest was not uploaded. Comments still work, and resolve once `npx ontrackd push` succeeds.');
         }
         return self::SUCCESS;
     }
@@ -156,7 +165,7 @@ final class ManifestCommand extends Command
             if ($newest === null || filemtime($path) > $newest[0]) $newest = [filemtime($path), $data];
         }
         if ($newest === null) {
-            $this->warn('  No manifest for this secret from the Vite build in public/build. If its components use @ontrackd/feedback, build with FEEDBACK_SECRET set, then run this again.');
+            $this->warn('  No manifest for this secret from the Vite build in public/build. If its components use ontrackd, build with ONTRACKD_SECRET set, then run this again.');
             return null;
         }
         $data = $newest[1];

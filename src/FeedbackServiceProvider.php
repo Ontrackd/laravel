@@ -37,7 +37,10 @@ final class FeedbackServiceProvider extends ServiceProvider
             });
         }
 
-        Blade::directive('feedback', static fn () => '<?php echo \\Ontrackd\\Feedback\\Feedback::scriptTag(); ?>');
+        // `@feedback` is the name before the rename; it still works.
+        foreach (['ontrackd', 'feedback'] as $directive) {
+            Blade::directive($directive, static fn () => '<?php echo \\Ontrackd\\Feedback\\Feedback::scriptTag(); ?>');
+        }
         $this->app['router']->pushMiddlewareToGroup('web', InjectWidget::class);
 
         // The widget and its API on this app's own origin, from the sidecar. Outside the web group:
