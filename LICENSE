@@ -1,0 +1,45 @@
+ontrackd for Laravel License
+
+Copyright (c) 2026 ontrackd. All rights reserved.
+
+This license covers the software in this repository (the "Software"). "ontrackd" means the
+ontrackd service at https://ontrackd.com and its operator.
+
+1. What you may do
+
+   You may install, run, read and modify the Software, and include it in your own applications,
+   only to use those applications with ontrackd, under an ontrackd account and the ontrackd terms
+   of service. Any plan counts, the free one included.
+
+2. What you may not do
+
+   You may not:
+
+   a. use the Software, or any part or modified version of it, with any service other than
+      ontrackd;
+   b. use the Software, or any part or modified version of it, to build, offer or help build a
+      product or service that competes with ontrackd, or that provides visual feedback, review or
+      annotation of applications to third parties;
+   c. sell, rent, sublicense or distribute the Software on its own, or as part of a library, kit
+      or template, other than inside an application you use with ontrackd;
+   d. remove or change this license or the copyright notice.
+
+3. Changes you make
+
+   Modified versions remain covered by this license. You may share your changes with ontrackd, for
+   example in an issue or a pull request, and by doing so you allow ontrackd to use them.
+
+4. Ending
+
+   Your rights under this license end automatically if you break it. When they end, you must stop
+   using the Software and delete your copies.
+
+5. No warranty
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+   NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+   NONINFRINGEMENT. IN NO EVENT SHALL ONTRACKD OR ITS CONTRIBUTORS BE LIABLE FOR ANY CLAIM, DAMAGES
+   OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+   IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+All rights not expressly granted here are reserved by ontrackd.

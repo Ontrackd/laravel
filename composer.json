@@ -1,0 +1,25 @@
+{
+    "name": "ontrackd/laravel",
+    "description": "ontrackd for Laravel: reviewers comment on your pages, and each comment points at the Blade line that renders the element.",
+    "type": "library",
+    "license": "proprietary",
+    "homepage": "https://ontrackd.com",
+    "keywords": ["laravel", "feedback", "review", "blade", "inertia", "mcp"],
+    "support": {
+        "docs": "https://ontrackd.com/docs/",
+        "issues": "https://github.com/Ontrackd/laravel/issues",
+        "source": "https://github.com/Ontrackd/laravel"
+    },
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "illuminate/http": "^11.0|^12.0|^13.0",
+        "illuminate/view": "^11.0|^12.0|^13.0"
+    },
+    "autoload": {
+        "psr-4": { "Ontrackd\\Feedback\\": "src/" }
+    },
+    "extra": {
+        "laravel": { "providers": ["Ontrackd\\Feedback\\FeedbackServiceProvider"] }
+    }
+}
